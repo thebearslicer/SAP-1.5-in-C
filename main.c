@@ -14,15 +14,16 @@ SAP-1.5 by TheBearSlicer
 7 = OUT
 8 = JMP
 9 = JC
+10 = INC
 */
 int main() {
 
-    short int accumlator;
-    short int b_register;
-    short int program_counter;
-    short int memory_address_register;
-    short int instruction_register;
-    short int output_register;
+    unsigned short int accumlator;
+    unsigned short int b_register;
+    unsigned short int program_counter;
+    unsigned short int memory_address_register;
+    unsigned short int instruction_register;
+    unsigned short int output_register;
     bool carry_flag;
 
     //Setup
@@ -30,21 +31,35 @@ int main() {
     b_register = 0;
     program_counter = 0;
     memory_address_register = 0;
-    short int RAM[16] = {
-        0, 0, 0, 0,
+    unsigned short int RAM[16] = {
+        2, 32767, 4, 15,            
+        9, 13, 1, 0,             
         0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 0, 1};
+        0, 7, 1, 2};
     instruction_register = 0;
     output_register = 0;
     carry_flag = false;
-    bool running = true;
+
+    int loop;
+    char none;
     //run
 
-    while (running) {
-        printf("OUTPUT = %hd\n", output_register);
+    while (program_counter < 17) {
         memory_address_register = program_counter;
         instruction_register = RAM[memory_address_register];
+
+
+
+        printf("\n");
+        printf("A = %hu\n", accumlator);
+        printf("PC = %hu\n", program_counter);
+        printf("OUTPUT = %hu\n", output_register);
+        printf("IR = %hu\n", instruction_register);
+        printf("MAR = %hu\n", memory_address_register);
+        printf("Carry = %d\n", carry_flag);
+        for(loop = 0; loop < 16; loop++)
+            printf("%d ", RAM[loop]);
+        printf("\n");
 
 
         switch (instruction_register)
@@ -54,7 +69,7 @@ int main() {
             break;
 
         case 1:
-            running = false;
+            program_counter = 17;
             break;
 
         case 2:
@@ -63,17 +78,15 @@ int main() {
             break;
 
         case 3:
-            accumlator = RAM[RAM[memory_address_register + 1]];       //LDA                 //LDA
+            accumlator = RAM[RAM[memory_address_register + 1]];       //LDA               
             program_counter += 2;
             break;
 
         case 4:
             accumlator = accumlator + RAM[RAM[memory_address_register + 1]];        //ADD
-            if (accumlator > 255) {
+
+            if (accumlator > 32768 ) {
                 carry_flag = true;
-            }
-            if (accumlator < 255) {                 
-                carry_flag = false;
             }
             program_counter += 2;
             break;
@@ -94,17 +107,23 @@ int main() {
             break;
 
         case 8:
-            program_counter = RAM[RAM[memory_address_register + 1]]; //JMP
+            program_counter = RAM[memory_address_register + 1]; //JMP
             break;
 
         case 9:
             if (carry_flag == true) {
-                program_counter = RAM[RAM[memory_address_register + 1]];
-            }                                                   //JC
-            if (carry_flag == false) {
+                program_counter = RAM[memory_address_register + 1];
+            }                                                   //Jc
+            if (carry_flag == false)  {
                 program_counter += 2;
             break;
             }
+
+        case 10:
+            accumlator += 1;             //INC
+            program_counter += 1;    
+
+
         default:
             break;
         }
