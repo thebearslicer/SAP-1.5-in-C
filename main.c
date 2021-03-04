@@ -15,6 +15,7 @@ SAP-1.5 by TheBearSlicer
 8 = JMP
 9 = JC
 10 = INC
+11 = CMP
 */
 int main() {
 
@@ -32,10 +33,10 @@ int main() {
     program_counter = 0;
     memory_address_register = 0;
     unsigned short int RAM[16] = {
-        2, 32767, 4, 15,            
-        9, 13, 1, 0,             
+        2, 5, 11, 13,            
+        7, 1, 0, 0,             
         0, 0, 0, 0, 
-        0, 7, 1, 2};
+        0, 5, 0, 0};
     instruction_register = 0;
     output_register = 0;
     carry_flag = false;
@@ -88,6 +89,9 @@ int main() {
             if (accumlator > 32768 ) {
                 carry_flag = true;
             }
+            if (accumlator < 32768) {
+                carry_flag = false;
+            }
             program_counter += 2;
             break;
 
@@ -122,6 +126,19 @@ int main() {
         case 10:
             accumlator += 1;             //INC
             program_counter += 1;    
+
+        case 11:
+                if (accumlator == RAM[RAM[memory_address_register + 1]]) {
+                    accumlator = 0; //A = num
+                }
+                if (accumlator < RAM[RAM[memory_address_register + 1]]) {          //CMP
+                    accumlator = 1; //A < num
+                }
+                if (accumlator > RAM[RAM[memory_address_register + 1]]) {
+                    accumlator = 2; //A > num
+                }
+            program_counter += 2; 
+            break;       
 
 
         default:
