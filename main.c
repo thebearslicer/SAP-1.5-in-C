@@ -60,10 +60,12 @@ int main() {
         case 2:
             accumlator = RAM[memory_address_register + 1];  //LDI
             program_counter += 2;
-        
+            break;
+
         case 3:
             accumlator = RAM[RAM[memory_address_register + 1]];       //LDA                 //LDA
             program_counter += 2;
+            break;
 
         case 4:
             accumlator = accumlator + RAM[RAM[memory_address_register + 1]];        //ADD
@@ -74,21 +76,26 @@ int main() {
                 carry_flag = false;
             }
             program_counter += 2;
+            break;
 
         case 5:
             RAM[RAM[memory_address_register + 1]] = accumlator;         //STA
             program_counter += 2;
+            break;
 
         case 6:
             accumlator = accumlator - RAM[RAM[memory_address_register + 1]];        //SUB
             program_counter += 2;
+            break;
 
         case 7:
             output_register = accumlator;           //OUT
             program_counter += 1;
+            break;
 
         case 8:
             program_counter = RAM[RAM[memory_address_register + 1]]; //JMP
+            break;
 
         case 9:
             if (carry_flag == true) {
@@ -96,6 +103,7 @@ int main() {
             }                                                   //JC
             if (carry_flag == false) {
                 program_counter += 2;
+            break;
             }
         default:
             break;
