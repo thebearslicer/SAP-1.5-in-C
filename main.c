@@ -38,70 +38,69 @@ int main() {
     instruction_register = 0;
     output_register = 0;
     carry_flag = false;
-
+    bool running = true;
     //run
 
-    while (1) {
+    while (running) {
         printf("OUTPUT = %hd\n", output_register);
         memory_address_register = program_counter;
         instruction_register = RAM[memory_address_register];
 
-        if (instruction_register == 0) {
-            program_counter += 1;           //NoOp
-        }
 
-        if (instruction_register == 1) {
-            break;                          //HLT
-        }
+        switch (instruction_register)
+        {
+        case 0:
+            program_counter += 1;
+            break;
 
-        if (instruction_register ==  2) {
+        case 1:
+            running = false;
+            break;
+
+        case 2:
             accumlator = RAM[memory_address_register + 1];  //LDI
             program_counter += 2;
-        }
-
-        if (instruction_register == 3) {
-            accumlator = RAM[RAM[memory_address_register + 1]];                        //LDA
+        
+        case 3:
+            accumlator = RAM[RAM[memory_address_register + 1]];       //LDA                 //LDA
             program_counter += 2;
-        }
 
-        if (instruction_register == 4) {
+        case 4:
             accumlator = accumlator + RAM[RAM[memory_address_register + 1]];        //ADD
             if (accumlator > 255) {
                 carry_flag = true;
             }
-            if (accumlator < 255) {
+            if (accumlator < 255) {                 
                 carry_flag = false;
             }
             program_counter += 2;
-        }
 
-        if (instruction_register == 5) {
+        case 5:
             RAM[RAM[memory_address_register + 1]] = accumlator;         //STA
             program_counter += 2;
-        }
 
-        if (instruction_register == 6) {
+        case 6:
             accumlator = accumlator - RAM[RAM[memory_address_register + 1]];        //SUB
             program_counter += 2;
-        }
 
-        if (instruction_register == 7) {
+        case 7:
             output_register = accumlator;           //OUT
             program_counter += 1;
-        }
 
-        if (instruction_register == 8) {
+        case 8:
             program_counter = RAM[RAM[memory_address_register + 1]]; //JMP
-        }
 
-        if (instruction_register == 9) { 
+        case 9:
             if (carry_flag == true) {
                 program_counter = RAM[RAM[memory_address_register + 1]];
             }                                                   //JC
             if (carry_flag == false) {
                 program_counter += 2;
             }
+        default:
+            break;
         }
+
     }
     return 0;
 }
